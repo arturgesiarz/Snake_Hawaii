@@ -30,10 +30,7 @@ void Tick (bool& isGameOver, Sound& eatEffectSound, GameParameters& gameParamete
     }
 
     if ((gameParameters.s[0].x == gameParameters.f.x) && (gameParameters.s[0].y == gameParameters.f.y)) {
-
-        Time duration = seconds(0.5);
         eatEffectSound.play();
-        sleep(duration);
 
         gameParameters.num++;
         gameParameters.f.x = rand() % GameParameters::N;

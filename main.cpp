@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <ctime>
+#include <iostream>
 #include "button.h"
 
 using namespace sf;
@@ -29,43 +30,46 @@ void GameOver(RenderWindow& window) {
     text.setPosition(80, 50);
 
     Button retryButton(sf::Vector2f(50, 100), sf::Vector2f(100, 40), "RETRY", font);
-//    Button closeButton(sf::Vector2f(150, 100), sf::Vector2f(100, 40), "CLOSE", font);
-//
-//    retryButton.setOnClick([&]() {
-//        gameOverWindow.close();
-//        // Tu możesz dodać kod, który resetuje stan gry
-//        dir = 0;
-//        num = 4;
-//        f.x = 10;
-//        f.y = 10;
-//    });
-//
-//    closeButton.setOnClick([&]() {
-//        gameOverWindow.close();
-//        window.close(); // Zamknij główne okno gry
-//    });
-//
-//    while (gameOverWindow.isOpen()) {
-//        Event event;
-//        while (gameOverWindow.pollEvent(event)) {
-//            if (event.type == Event::Closed) {
-//                gameOverWindow.close();
-//                window.close(); // Zamknij główne okno gry przy zamknięciu okna dialogowego
-//            }
-//
-//            retryButton.isClicked(event, gameOverWindow);
-//            closeButton.isClicked(event, gameOverWindow);
-//        }
-//
-//        gameOverWindow.clear(Color::White);
-//        gameOverWindow.draw(text);
-//        retryButton.draw(gameOverWindow);
-//        closeButton.draw(gameOverWindow);
-//        gameOverWindow.display();
-//    }
+    Button closeButton(sf::Vector2f(150, 100), sf::Vector2f(100, 40), "CLOSE", font);
+
+    retryButton.setOnClick([&]() {
+        gameOverWindow.close();
+        dir = 0;
+        num = 4;
+        f.x = 10;
+        f.y = 10;
+    });
+
+    closeButton.setOnClick([&]() {
+        gameOverWindow.close();
+        window.close();
+    });
+
+    while (gameOverWindow.isOpen()) {
+        Event event;
+        while (gameOverWindow.pollEvent(event)) {
+            if (event.type == Event::Closed) {
+                gameOverWindow.close();
+                window.close();
+            }
+        }
+
+        gameOverWindow.clear(Color::White);
+        gameOverWindow.draw(text);
+        retryButton.draw(gameOverWindow);
+        closeButton.draw(gameOverWindow);
+
+        if(retryButton.isClicked(event, gameOverWindow)) {
+            retryButton.executeOnClick();
+        }
+        if(closeButton.isClicked(event, gameOverWindow)) {
+            closeButton.executeOnClick();
+        }
+        gameOverWindow.display();
+    }
 }
 
-void Tick () {
+void Tick (RenderWindow& window) {
     for (int i = num; i > 0; --i) {
         s[i].x = s[i - 1].x;
         s[i].y = s[i - 1].y;
@@ -102,6 +106,7 @@ void Tick () {
     for (int i = 1; i < num; i++) {
         if(s[0].x == s[i].x && s[0].y == s[i].y) {
             //GAME OVER
+            GameOver(window);
         }
     }
 }
@@ -141,7 +146,7 @@ int main() {
 
         if (timer > delay) {
             timer = 0;
-            Tick();
+            Tick(window);
         }
         switch (dir) {
             case 0:

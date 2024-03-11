@@ -1,7 +1,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <utility>
-#include "button.h"
+#include "../include/Button.h"
 
 Button::Button(sf::Vector2f position, sf::Vector2f size, std::string text, sf::Font& font)
             : position(position), size(size) {

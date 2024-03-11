@@ -3,6 +3,9 @@
 #define SNAKE_BUTTON_H
 
 #include <functional>
+#include <SFML/Graphics.hpp>
+
+using namespace sf;
 
 class Button {
 public:

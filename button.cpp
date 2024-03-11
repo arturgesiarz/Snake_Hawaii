@@ -9,7 +9,6 @@ Button::Button(sf::Vector2f position, sf::Vector2f size, std::string text, sf::F
         rect.setSize(size);
         rect.setFillColor(sf::Color::Blue);
 
-        // Ustawienie tekstu na przycisku
         buttonText.setFont(font);
         buttonText.setString(text);
         buttonText.setCharacterSize(20);

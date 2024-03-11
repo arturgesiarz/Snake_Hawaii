@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <ctime>
-#include <iostream>
 #include "button.h"
 
 using namespace sf;
@@ -21,10 +21,10 @@ struct Fruct {
     int x, y;
 } f;
 
-void GameOver(RenderWindow& window) {
+void GameOver(RenderWindow& window,bool& isGameOver) {
     RenderWindow gameOverWindow(VideoMode(300, 200), "GAME OVER!", Style::Close);
     Font font;
-    font.loadFromFile("E:\\CLionProjects\\Snake\\resources\\arial.ttf");
+    font.loadFromFile(R"(E:\CLionProjects\Snake\resources\arial.ttf)");
 
     Text text("GAME OVER", font, 30);
     text.setPosition(80, 50);
@@ -60,6 +60,7 @@ void GameOver(RenderWindow& window) {
         closeButton.draw(gameOverWindow);
 
         if(retryButton.isClicked(event, gameOverWindow)) {
+            isGameOver = false;
             retryButton.executeOnClick();
         }
         if(closeButton.isClicked(event, gameOverWindow)) {
@@ -69,7 +70,7 @@ void GameOver(RenderWindow& window) {
     }
 }
 
-void Tick (RenderWindow& window) {
+void Tick (bool& isGameOver) {
     for (int i = num; i > 0; --i) {
         s[i].x = s[i - 1].x;
         s[i].y = s[i - 1].y;
@@ -105,8 +106,7 @@ void Tick (RenderWindow& window) {
 
     for (int i = 1; i < num; i++) {
         if(s[0].x == s[i].x && s[0].y == s[i].y) {
-            //GAME OVER
-            GameOver(window);
+            isGameOver = true;
         }
     }
 }
@@ -114,12 +114,21 @@ void Tick (RenderWindow& window) {
 int main() {
     srand(time(0));
 
+    bool isGameOver = false;
+
     RenderWindow window(VideoMode(w, h), "Snake Game!");
 
+    SoundBuffer gameOverSoundBuffer;
+    if(!gameOverSoundBuffer.loadFromFile(R"(resources/death_song.wav)")) {
+        return -1;
+    }
+    Sound gameOverSound(gameOverSoundBuffer);
+    gameOverSound.setBuffer(gameOverSoundBuffer);
+
     Texture t1, t2, t3;
-    t1.loadFromFile(R"(E:\CLionProjects\Snake\resources\white.png)");
-    t2.loadFromFile(R"(E:\CLionProjects\Snake\resources\red.png)");
-    t3.loadFromFile(R"(E:\CLionProjects\Snake\resources\green.png)");
+    t1.loadFromFile(R"(resources\white.png)");
+    t2.loadFromFile(R"(resources\red.png)");
+    t3.loadFromFile(R"(resources\green.png)");
 
     Sprite sprite1(t1);
     Sprite sprite2(t2);
@@ -146,7 +155,7 @@ int main() {
 
         if (timer > delay) {
             timer = 0;
-            Tick(window);
+            Tick(isGameOver);
         }
         switch (dir) {
             case 0:
@@ -181,6 +190,11 @@ int main() {
         window.draw(sprite3);
 
         window.display();
+
+        if(isGameOver) {
+            gameOverSound.play();
+            GameOver(window, isGameOver);
+        }
     }
 
 

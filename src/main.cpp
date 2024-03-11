@@ -31,16 +31,15 @@ void Tick (bool& isGameOver, Sound& eatEffectSound, GameParameters& gameParamete
 
     if ((gameParameters.s[0].x == gameParameters.f.x) && (gameParameters.s[0].y == gameParameters.f.y)) {
         eatEffectSound.play();
-
         gameParameters.num++;
         gameParameters.f.x = rand() % GameParameters::N;
         gameParameters.f.y = rand() % GameParameters::M;
     }
 
-    if (gameParameters.s[0].x > GameParameters::N) gameParameters.s[0].x = 0;
-    if (gameParameters.s[0].x < 0) gameParameters.s[0].x = GameParameters::N;
-    if (gameParameters.s[0].y > GameParameters::M) gameParameters.s[0].y = 0;
-    if (gameParameters.s[0].y < 0) gameParameters.s[0].y = GameParameters::M;
+    if (gameParameters.s[0].x >= GameParameters::N) gameParameters.s[0].x = 0;
+    if (gameParameters.s[0].x < 0) gameParameters.s[0].x = GameParameters::N - 1;
+    if (gameParameters.s[0].y >= GameParameters::M) gameParameters.s[0].y = 0;
+    if (gameParameters.s[0].y < 0) gameParameters.s[0].y = GameParameters::M - 1;
 
     for (int i = 1; i < gameParameters.num; i++) {
         if(gameParameters.s[0].x == gameParameters.s[i].x && gameParameters.s[0].y == gameParameters.s[i].y) {
@@ -57,7 +56,7 @@ int main() {
 
     GameParameters gameParameters;
 
-    RenderWindow window(VideoMode(GameParameters::W, GameParameters::H + 100), "Snake Game!");
+    RenderWindow window(VideoMode(GameParameters::W + 200, GameParameters::H + 200), "Snake Game!", Style::Close);
     window.setVisible(false);
 
     SoundBuffer gameOverSoundBuffer;
@@ -142,34 +141,42 @@ int main() {
 
         // draw
 
+        sf::Texture mainTexture;
+        mainTexture.loadFromFile(R"(resources/main.jpg)");
+
+        sf::Sprite backgroundImage;
+        backgroundImage.setTexture(mainTexture);
+
+        window.draw(backgroundImage);
+
         for (int i = 0; i < GameParameters::N; i++) {
             for (int j = 0; j < GameParameters::M; j++) {
-                sprite1.setPosition(i * GameParameters::SIZE, j * GameParameters::SIZE);
+                sprite1.setPosition(i * GameParameters::SIZE + 100, j * GameParameters::SIZE + 100);
                 window.draw(sprite1);
             }
         }
         for (int i = 0; i < gameParameters.num; i++) {
-            sprite2.setPosition(gameParameters.s[i].x * GameParameters::SIZE,
-                                gameParameters.s[i].y * GameParameters::SIZE);
+            sprite2.setPosition(gameParameters.s[i].x * GameParameters::SIZE + 100,
+                                gameParameters.s[i].y * GameParameters::SIZE + 100);
             window.draw(sprite2);
         }
 
-        sprite3.setPosition(gameParameters.f.x * GameParameters::SIZE,
-                            gameParameters.f.y * GameParameters::SIZE);
+        sprite3.setPosition(gameParameters.f.x * GameParameters::SIZE + 100,
+                            gameParameters.f.y * GameParameters::SIZE + 100);
+
         window.draw(sprite3);
 
         std::string scoreString = std::to_string(gameParameters.num - 4);
 
-        sf::RectangleShape rectangle(sf::Vector2f(800, 100)); // Rozmiar prostokąta: szerokość = 200, wysokość = 100
-        rectangle.setPosition(0, 800); // Ustaw pozycję prostokąta w oknie
-        rectangle.setFillColor(sf::Color::Green);
+        sf::Text textScore;
+        textScore.setFont(font);
+        textScore.setCharacterSize(40);
+        textScore.setFillColor(sf::Color(133, 133, 224));
 
-        text.setString("Your score: " + scoreString);
-        text.setPosition(400, 850);
+        textScore.setString("Your score: " + scoreString);
+        textScore.setPosition(300, 5);
 
-        window.draw(rectangle);
-        window.draw(text);
-
+        window.draw(textScore);
         window.display();
 
         if(isGameOver) {

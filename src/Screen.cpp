@@ -6,7 +6,7 @@ using namespace sf;
 
 void Screen::gameOverScreen(sf::RenderWindow &window, bool &isGameOver, GameParameters& gameParameters) {
     window.setVisible(false);
-    RenderWindow gameOverWindow(VideoMode(GameParameters::W, GameParameters::H), "GAME OVER!", Style::Close);
+    RenderWindow gameOverWindow(VideoMode(GameParameters::W + 200, GameParameters::H + 200), "GAME OVER!", Style::Close);
 
     Font font;
     font.loadFromFile(R"(resources\arial.ttf)");
@@ -17,8 +17,8 @@ void Screen::gameOverScreen(sf::RenderWindow &window, bool &isGameOver, GamePara
     sf::Sprite backgroundImage;
     backgroundImage.setTexture(texture);
 
-    sf::Vector2f buttonRetryPosition(GameParameters::W / 2 - 100 - 10, GameParameters::H - 100);
-    sf::Vector2f buttonClosePosition(GameParameters::W / 2 + 10, GameParameters::H - 100);
+    sf::Vector2f buttonRetryPosition(GameParameters::W / 2 - 50, GameParameters::H);
+    sf::Vector2f buttonClosePosition(GameParameters::W / 2 + 100 + 10 , GameParameters::H);
 
     Button retryButton(buttonRetryPosition, sf::Vector2f(100, 40), "RETRY", font);
     Button closeButton( buttonClosePosition, sf::Vector2f(100, 40), "CLOSE", font);
@@ -81,13 +81,13 @@ void Screen::gameOverScreen(sf::RenderWindow &window, bool &isGameOver, GamePara
         std::string scoreString = std::to_string(gameParameters.num - 4);
 
         sf::RectangleShape gameOverRectangle(sf::Vector2f(GameParameters::W - 200, 200));
-        gameOverRectangle.setPosition(100, 400);
+        gameOverRectangle.setPosition(200, 500);
         gameOverRectangle.setFillColor(sf::Color(255, 255, 255, 200));
 
 
         textScore.setString("Your score: " + scoreString);
-        textScore.setPosition(250, 500);
-        textGameOver.setPosition(150, 400);
+        textScore.setPosition(350, 600);
+        textGameOver.setPosition(250, 500);
 
         gameOverWindow.draw(gameOverRectangle);
         gameOverWindow.draw(textGameOver);
@@ -106,7 +106,7 @@ void Screen::gameOverScreen(sf::RenderWindow &window, bool &isGameOver, GamePara
 }
 
 void Screen::welcomeScreen(sf::RenderWindow& window, bool& startGame) {
-    RenderWindow gameStartWindow(VideoMode(GameParameters::W, GameParameters::H), "Snake Game! - Start", Style::Close);
+    RenderWindow gameStartWindow(VideoMode(GameParameters::W + 200, GameParameters::H + 200), "Snake Game! - Start", Style::Close);
 
     sf::Texture texture;
     texture.loadFromFile(R"(resources\start_vol2.png)");
@@ -117,8 +117,8 @@ void Screen::welcomeScreen(sf::RenderWindow& window, bool& startGame) {
     Font font;
     font.loadFromFile(R"(resources\arial.ttf)");
 
-    sf::Vector2f buttonSize(100, 40);
-    sf::Vector2f buttonPosition(GameParameters::W / 2 - buttonSize.x / 2, GameParameters::H  - buttonSize.y - 100);
+    sf::Vector2f buttonSize(100, 50);
+    sf::Vector2f buttonPosition(450, 800);
 
     Button startButton(buttonPosition, buttonSize, "START", font);
 

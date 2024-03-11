@@ -6,10 +6,10 @@
 
 class GameParameters {
 public:
-    const static int N = 50, M = 50;
-    const static int SIZE = 16;
-    const static int W = SIZE * N;
-    const static int H = SIZE * M;
+    const static int N = 25, M = 25;
+    const static int SIZE = 32;
+    const static int W = 800;
+    const static int H = 800;
 
     int direction;
     int num;

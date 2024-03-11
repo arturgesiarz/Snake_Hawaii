@@ -20,11 +20,26 @@ void Screen::gameOverScreen(sf::RenderWindow &window, bool &isGameOver, GamePara
     Text text("GAME OVER", font, 30);
     text.setPosition(80, 50);
 
-    sf::Vector2f buttonRetryPosition(GameParameters::W / 2 - 100 - 10, GameParameters::H / 2);
-    sf::Vector2f buttonClosePosition(GameParameters::W / 2 + 10, GameParameters::H / 2);
+    sf::Vector2f buttonRetryPosition(GameParameters::W / 2 - 100 - 10, GameParameters::H - 100);
+    sf::Vector2f buttonClosePosition(GameParameters::W / 2 + 10, GameParameters::H - 100);
 
     Button retryButton(buttonRetryPosition, sf::Vector2f(100, 40), "RETRY", font);
     Button closeButton( buttonClosePosition, sf::Vector2f(100, 40), "CLOSE", font);
+
+    sf::Color normalColor = sf::Color(255, 255, 77);
+    sf::Color textColor = sf::Color(77, 77, 0);
+    sf::Color outlineColor = sf::Color(255, 255, 77);
+    float outlineThickness = 2.0f;
+
+    retryButton.setFillColor(normalColor);
+    retryButton.setTextColor(textColor);
+    retryButton.setOutlineColor(outlineColor);
+    retryButton.setOutlineThickness(outlineThickness);
+
+    closeButton.setFillColor(normalColor);
+    closeButton.setTextColor(textColor);
+    closeButton.setOutlineColor(outlineColor);
+    closeButton.setOutlineThickness(outlineThickness);
 
     retryButton.setOnClick([&]() {
         gameOverWindow.close();
@@ -70,7 +85,7 @@ void Screen::welcomeScreen(sf::RenderWindow& window, bool& startGame) {
     RenderWindow gameStartWindow(VideoMode(GameParameters::W, GameParameters::H), "Snake Game! - Start", Style::Close);
 
     sf::Texture texture;
-    texture.loadFromFile(R"(resources\start.png)");
+    texture.loadFromFile(R"(resources\start_vol2.png)");
 
     sf::Sprite backgroundImage;
     backgroundImage.setTexture(texture);
@@ -79,13 +94,13 @@ void Screen::welcomeScreen(sf::RenderWindow& window, bool& startGame) {
     font.loadFromFile(R"(resources\arial.ttf)");
 
     sf::Vector2f buttonSize(100, 40);
-    sf::Vector2f buttonPosition(GameParameters::W / 2 - buttonSize.x / 2, GameParameters::H / 2 - buttonSize.y / 2);
+    sf::Vector2f buttonPosition(GameParameters::W / 2 - buttonSize.x / 2, GameParameters::H  - buttonSize.y - 100);
 
     Button startButton(buttonPosition, buttonSize, "START", font);
 
-    sf::Color normalColor = sf::Color(255, 77, 255);
+    sf::Color normalColor = sf::Color(0, 179, 0);
     sf::Color textColor = sf::Color::White;
-    sf::Color outlineColor = sf::Color(255, 77, 255);
+    sf::Color outlineColor = sf::Color(0, 179, 0);
     float outlineThickness = 2.0f;
 
     startButton.setFillColor(normalColor);

@@ -3,8 +3,7 @@
 #include <utility>
 #include "../include/Button.h"
 
-Button::Button(sf::Vector2f position, sf::Vector2f size, std::string text, sf::Font& font)
-            : position(position), size(size) {
+Button::Button(sf::Vector2f position, sf::Vector2f size, std::string text, sf::Font& font) {
         rect.setPosition(position);
         rect.setSize(size);
         rect.setFillColor(sf::Color::Blue);
@@ -22,9 +21,8 @@ void Button::draw(sf::RenderWindow& window) {
 }
 
 bool Button::isClicked(sf::Event event, sf::RenderWindow& window) {
-    if (event.type == sf::Event::MouseButtonPressed) {
-        sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
-        if (rect.getGlobalBounds().contains(mousePos)) {
+    if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+        if (isHovered(window)) {
             return true;
         }
     }
@@ -40,3 +38,30 @@ void Button::executeOnClick() {
         onClick();
     }
 }
+bool Button::isHovered(sf::RenderWindow& window) {
+    sf::Vector2f mousePosition = sf::Vector2f(sf::Mouse::getPosition(window));
+    return rect.getGlobalBounds().contains(mousePosition);
+}
+
+void Button::setFillColor(const sf::Color& color) {
+    rect.setFillColor(color);
+}
+
+void Button::setHoverColor(const sf::Color& color) {
+    hoverColor = color;
+}
+
+void Button::setTextColor(const sf::Color& color) {
+    buttonText.setFillColor(color);
+}
+
+void Button::setOutlineColor(const sf::Color& color) {
+    rect.setOutlineColor(color);
+}
+
+void Button::setOutlineThickness(float thickness) {
+    rect.setOutlineThickness(thickness);
+}
+
+
+

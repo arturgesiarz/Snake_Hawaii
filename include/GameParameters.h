@@ -6,7 +6,7 @@
 
 class GameParameters {
 public:
-    const static int N = 30, M = 20;
+    const static int N = 50, M = 50;
     const static int SIZE = 16;
     const static int W = SIZE * N;
     const static int H = SIZE * M;

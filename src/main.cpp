@@ -56,10 +56,12 @@ int main() {
     srand(time(0));
 
     bool isGameOver = false;
+    bool startGame = false;
 
     GameParameters gameParameters;
 
     RenderWindow window(VideoMode(GameParameters::W, GameParameters::H), "Snake Game!");
+    window.setVisible(false);
 
     SoundBuffer gameOverSoundBuffer;
     SoundBuffer eatEffectBuffer;
@@ -89,7 +91,9 @@ int main() {
     gameParameters.f.x = 10;
     gameParameters.f.y = 10;
 
-    while (window.isOpen()) {
+    Screen::welcomeScreen(window,startGame);
+
+    while (window.isOpen() && startGame) {
         float time = clock.getElapsedTime().asSeconds();
         clock.restart();
         timer += time;

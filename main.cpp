@@ -70,7 +70,7 @@ void GameOver(RenderWindow& window,bool& isGameOver) {
     }
 }
 
-void Tick (bool& isGameOver) {
+void Tick (bool& isGameOver, Sound& eatEffectSound) {
     for (int i = num; i > 0; --i) {
         s[i].x = s[i - 1].x;
         s[i].y = s[i - 1].y;
@@ -94,6 +94,9 @@ void Tick (bool& isGameOver) {
     }
 
     if ((s[0].x == f.x) && (s[0].y == f.y)) {
+        Time duration = seconds(0.5);
+        eatEffectSound.play();
+        sleep(duration);
         num++;
         f.x = rand() % N;
         f.y = rand() % M;
@@ -115,15 +118,22 @@ int main() {
     srand(time(0));
 
     bool isGameOver = false;
+    bool isBackgroundMusicPlaying = false;
 
     RenderWindow window(VideoMode(w, h), "Snake Game!");
 
     SoundBuffer gameOverSoundBuffer;
+    SoundBuffer eatEffectBuffer;
+
     if(!gameOverSoundBuffer.loadFromFile(R"(resources/death_song.wav)")) {
         return -1;
     }
+    if(!eatEffectBuffer.loadFromFile(R"(resources/eat_effect.wav)")) {
+        return -1;
+    }
+
     Sound gameOverSound(gameOverSoundBuffer);
-    gameOverSound.setBuffer(gameOverSoundBuffer);
+    Sound eatEffectSound(eatEffectBuffer);
 
     Texture t1, t2, t3;
     t1.loadFromFile(R"(resources\white.png)");
@@ -155,7 +165,7 @@ int main() {
 
         if (timer > delay) {
             timer = 0;
-            Tick(isGameOver);
+            Tick(isGameOver, eatEffectSound);
         }
         switch (dir) {
             case 0:
@@ -194,6 +204,7 @@ int main() {
         if(isGameOver) {
             gameOverSound.play();
             GameOver(window, isGameOver);
+            gameOverSound.stop();
         }
     }
 

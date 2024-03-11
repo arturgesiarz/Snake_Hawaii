@@ -7,44 +7,46 @@
 using namespace sf;
 
 void Tick (bool& isGameOver, Sound& eatEffectSound, GameParameters& gameParameters) {
-    for (int i = gameParameters.getNum(); i > 0; --i) {
-        gameParameters.getS()[i].x = gameParameters.getS()[i - 1].x;
-        gameParameters.getS()[i].y = gameParameters.getS()[i - 1].y;
+    for (int i = gameParameters.num; i > 0; --i) {
+        gameParameters.s[i].x = gameParameters.s[i - 1].x;
+        gameParameters.s[i].y = gameParameters.s[i - 1].y;
     }
 
-    switch (gameParameters.getDir()) {
+    switch (gameParameters.direction) {
         case 0:
-            gameParameters.getS()[0].y += 1;
+            gameParameters.s[0].y += 1;
             break;
         case 1:
-            gameParameters.getS()[0].x -= 1;
+            gameParameters.s[0].x -= 1;
             break;
         case 2:
-            gameParameters.getS()[0].x += 1;
+            gameParameters.s[0].x += 1;
             break;
         case 3:
-            gameParameters.getS()[0].y -= 1;
+            gameParameters.s[0].y -= 1;
             break;
         default:
             break;
     }
 
-    if ((gameParameters.getS()[0].x == gameParameters.getF().x) && (gameParameters.getS()[0].y == gameParameters.getF().y)) {
+    if ((gameParameters.s[0].x == gameParameters.f.x) && (gameParameters.s[0].y == gameParameters.f.y)) {
+
         Time duration = seconds(0.5);
         eatEffectSound.play();
         sleep(duration);
-        gameParameters.setNum(gameParameters.getNum() + 1);
-        gameParameters.getF().x = rand() % GameParameters::N;
-        gameParameters.getF().y = rand() % GameParameters::M;
+
+        gameParameters.num++;
+        gameParameters.f.x = rand() % GameParameters::N;
+        gameParameters.f.y = rand() % GameParameters::M;
     }
 
-    if (gameParameters.getS()[0].x > GameParameters::N) gameParameters.getS()[0].x = 0;
-    if (gameParameters.getS()[0].x < 0) gameParameters.getS()[0].x = GameParameters::N;
-    if (gameParameters.getS()[0].y > GameParameters::M) gameParameters.getS()[0].y = 0;
-    if (gameParameters.getS()[0].y < 0) gameParameters.getS()[0].y = GameParameters::M;
+    if (gameParameters.s[0].x > GameParameters::N) gameParameters.s[0].x = 0;
+    if (gameParameters.s[0].x < 0) gameParameters.s[0].x = GameParameters::N;
+    if (gameParameters.s[0].y > GameParameters::M) gameParameters.s[0].y = 0;
+    if (gameParameters.s[0].y < 0) gameParameters.s[0].y = GameParameters::M;
 
-    for (int i = 1; i < gameParameters.getNum(); i++) {
-        if(gameParameters.getS()[0].x == gameParameters.getS()[i].x && gameParameters.getS()[0].y == gameParameters.getS()[i].y) {
+    for (int i = 1; i < gameParameters.num; i++) {
+        if(gameParameters.s[0].x == gameParameters.s[i].x && gameParameters.s[0].y == gameParameters.s[i].y) {
             isGameOver = true;
         }
     }
@@ -84,8 +86,8 @@ int main() {
     Clock clock;
     float timer = 0, delay = 0.1;
 
-    gameParameters.getF().x = 10;
-    gameParameters.getF().y = 10;
+    gameParameters.f.x = 10;
+    gameParameters.f.y = 10;
 
     while (window.isOpen()) {
         float time = clock.getElapsedTime().asSeconds();
@@ -105,19 +107,19 @@ int main() {
             Tick(isGameOver, eatEffectSound, gameParameters);
         }
 
-        int dir = gameParameters.getDir();
+        int dir = gameParameters.direction;
 
         switch (dir) {
             case 0:
             case 3:
-                if (Keyboard::isKeyPressed(Keyboard::Left)) gameParameters.setDir(1);
-                if (Keyboard::isKeyPressed(Keyboard::Right)) gameParameters.setDir(2);
+                if (Keyboard::isKeyPressed(Keyboard::Left)) gameParameters.direction = 1;
+                if (Keyboard::isKeyPressed(Keyboard::Right)) gameParameters.direction = 2;
                 break;
 
             case 1:
             case 2:
-                if (Keyboard::isKeyPressed(Keyboard::Up)) gameParameters.setDir(3);
-                if (Keyboard::isKeyPressed(Keyboard::Down)) gameParameters.setDir(0);
+                if (Keyboard::isKeyPressed(Keyboard::Up)) gameParameters.direction = 3;
+                if (Keyboard::isKeyPressed(Keyboard::Down)) gameParameters.direction = 0;
             default:
                 break;
         }
@@ -130,21 +132,21 @@ int main() {
                 window.draw(sprite1);
             }
         }
-        for (int i = 0; i < gameParameters.getNum(); i++) {
-            sprite2.setPosition(gameParameters.getS()[i].x * GameParameters::SIZE,
-                                gameParameters.getS()[i].y * GameParameters::SIZE);
+        for (int i = 0; i < gameParameters.num; i++) {
+            sprite2.setPosition(gameParameters.s[i].x * GameParameters::SIZE,
+                                gameParameters.s[i].y * GameParameters::SIZE);
             window.draw(sprite2);
         }
 
-        sprite3.setPosition(gameParameters.getF().x * GameParameters::SIZE,
-                            gameParameters.getF().y * GameParameters::SIZE);
+        sprite3.setPosition(gameParameters.f.x * GameParameters::SIZE,
+                            gameParameters.f.y * GameParameters::SIZE);
         window.draw(sprite3);
 
         window.display();
 
         if(isGameOver) {
             gameOverSound.play();
-            Screen::gameOver(window, isGameOver, gameParameters);
+            Screen::gameOverScreen(window, isGameOver, gameParameters);
             gameOverSound.stop();
         }
     }

@@ -4,7 +4,8 @@
 
 using namespace sf;
 
-void Screen::gameOver(sf::RenderWindow &window, bool &isGameOver, GameParameters& gameParameters) {
+void Screen::gameOverScreen(sf::RenderWindow &window, bool &isGameOver, GameParameters& gameParameters) {
+    window.setVisible(false);
     RenderWindow gameOverWindow(VideoMode(300, 200), "GAME OVER!", Style::Close);
     Font font;
     font.loadFromFile(R"(resources\arial.ttf)");
@@ -17,15 +18,16 @@ void Screen::gameOver(sf::RenderWindow &window, bool &isGameOver, GameParameters
 
     retryButton.setOnClick([&]() {
         gameOverWindow.close();
-        gameParameters.setDir(0);
-        gameParameters.setNum(4);
-        gameParameters.getF().x = 10;
-        gameParameters.getF().y = 10;
+        gameParameters.direction = 0;
+        gameParameters.num = 4;
+        gameParameters.f.x = 0;
+        gameParameters.f.y = 0;
+        window.setVisible(true);
     });
 
     closeButton.setOnClick([&]() {
-        gameOverWindow.close();
         window.close();
+        gameOverWindow.close();
     });
 
     while (gameOverWindow.isOpen()) {

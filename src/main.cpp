@@ -57,7 +57,7 @@ int main() {
 
     GameParameters gameParameters;
 
-    RenderWindow window(VideoMode(GameParameters::W, GameParameters::H), "Snake Game!");
+    RenderWindow window(VideoMode(GameParameters::W, GameParameters::H + 100), "Snake Game!");
     window.setVisible(false);
 
     SoundBuffer gameOverSoundBuffer;
@@ -89,6 +89,19 @@ int main() {
     gameParameters.f.y = 10;
 
     Screen::welcomeScreen(window,startGame);
+
+    sf::Font font;
+    if (!font.loadFromFile("resources/arial.ttf")) {
+        return -1;
+    }
+
+    sf::Text text;
+    text.setFont(font);
+    text.setCharacterSize(24);
+    text.setFillColor(sf::Color::Black);
+    text.setStyle(sf::Text::Bold);
+
+
 
     while (window.isOpen() && startGame) {
         float time = clock.getElapsedTime().asSeconds();
@@ -127,6 +140,8 @@ int main() {
 
         window.clear();
 
+        // draw
+
         for (int i = 0; i < GameParameters::N; i++) {
             for (int j = 0; j < GameParameters::M; j++) {
                 sprite1.setPosition(i * GameParameters::SIZE, j * GameParameters::SIZE);
@@ -142,6 +157,18 @@ int main() {
         sprite3.setPosition(gameParameters.f.x * GameParameters::SIZE,
                             gameParameters.f.y * GameParameters::SIZE);
         window.draw(sprite3);
+
+        std::string scoreString = std::to_string(gameParameters.num - 4);
+
+        sf::RectangleShape rectangle(sf::Vector2f(800, 100)); // Rozmiar prostokąta: szerokość = 200, wysokość = 100
+        rectangle.setPosition(0, 800); // Ustaw pozycję prostokąta w oknie
+        rectangle.setFillColor(sf::Color::Green);
+
+        text.setString("Your score: " + scoreString);
+        text.setPosition(400, 850);
+
+        window.draw(rectangle);
+        window.draw(text);
 
         window.display();
 

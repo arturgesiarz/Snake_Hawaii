@@ -17,9 +17,6 @@ void Screen::gameOverScreen(sf::RenderWindow &window, bool &isGameOver, GamePara
     sf::Sprite backgroundImage;
     backgroundImage.setTexture(texture);
 
-    Text text("GAME OVER", font, 30);
-    text.setPosition(80, 50);
-
     sf::Vector2f buttonRetryPosition(GameParameters::W / 2 - 100 - 10, GameParameters::H - 100);
     sf::Vector2f buttonClosePosition(GameParameters::W / 2 + 10, GameParameters::H - 100);
 
@@ -40,6 +37,18 @@ void Screen::gameOverScreen(sf::RenderWindow &window, bool &isGameOver, GamePara
     closeButton.setTextColor(textColor);
     closeButton.setOutlineColor(outlineColor);
     closeButton.setOutlineThickness(outlineThickness);
+
+    sf::Text textScore;
+    textScore.setFont(font);
+    textScore.setCharacterSize(50);
+    textScore.setFillColor(sf::Color(77, 0, 0));
+
+    sf::Text textGameOver;
+    textGameOver.setString("GAME OVER");
+    textGameOver.setFont(font);
+    textGameOver.setCharacterSize(80);
+    textGameOver.setFillColor(sf::Color(255, 26, 26));
+    textGameOver.setStyle(sf::Text::Bold);
 
     retryButton.setOnClick([&]() {
         gameOverWindow.close();
@@ -65,10 +74,25 @@ void Screen::gameOverScreen(sf::RenderWindow &window, bool &isGameOver, GamePara
         }
 
         gameOverWindow.clear(Color::White);
-        gameOverWindow.draw(text);
         gameOverWindow.draw(backgroundImage);
         retryButton.draw(gameOverWindow);
         closeButton.draw(gameOverWindow);
+
+        std::string scoreString = std::to_string(gameParameters.num - 4);
+
+        sf::RectangleShape gameOverRectangle(sf::Vector2f(GameParameters::W - 200, 200));
+        gameOverRectangle.setPosition(100, 400);
+        gameOverRectangle.setFillColor(sf::Color(255, 255, 255, 200));
+
+
+        textScore.setString("Your score: " + scoreString);
+        textScore.setPosition(250, 500);
+        textGameOver.setPosition(150, 400);
+
+        gameOverWindow.draw(gameOverRectangle);
+        gameOverWindow.draw(textGameOver);
+        gameOverWindow.draw(textScore);
+
 
         if(retryButton.isClicked(event, gameOverWindow)) {
             isGameOver = false;

@@ -3,13 +3,14 @@ project(Snake)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Snake src/main.cpp
+add_executable(Snake src/Game.cpp
         src/Button.cpp
         include/Button.h
         src/Screen.cpp
         include/Screen.h
         include/GameParameters.h
-        include/Snake.h)
+        include/Snake.h
+        src/Main.cpp)
 
 set(SFML_STATIC_LIBRARIES TRUE)
 set(SFML_DIR C:/SFML/lib/cmake/SFML)

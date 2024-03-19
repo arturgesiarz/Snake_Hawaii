@@ -158,3 +158,45 @@ void Screen::welcomeScreen(sf::RenderWindow& window, bool& startGame) {
     }
 
 }
+
+void Screen::move(bool &isGameOver, sf::Sound &eatEffectSound, GameParameters &gameParameters) {
+    for (int i = gameParameters.num; i > 0; --i) {
+        gameParameters.s[i].x = gameParameters.s[i - 1].x;
+        gameParameters.s[i].y = gameParameters.s[i - 1].y;
+    }
+
+    switch (gameParameters.direction) {
+        case 0:
+            gameParameters.s[0].y += 1;
+            break;
+        case 1:
+            gameParameters.s[0].x -= 1;
+            break;
+        case 2:
+            gameParameters.s[0].x += 1;
+            break;
+        case 3:
+            gameParameters.s[0].y -= 1;
+            break;
+        default:
+            break;
+    }
+
+    if ((gameParameters.s[0].x == gameParameters.f.x) && (gameParameters.s[0].y == gameParameters.f.y)) {
+        eatEffectSound.play();
+        gameParameters.num++;
+        gameParameters.f.x = rand() % GameParameters::N;
+        gameParameters.f.y = rand() % GameParameters::M;
+    }
+
+    if (gameParameters.s[0].x >= GameParameters::N) gameParameters.s[0].x = 0;
+    if (gameParameters.s[0].x < 0) gameParameters.s[0].x = GameParameters::N - 1;
+    if (gameParameters.s[0].y >= GameParameters::M) gameParameters.s[0].y = 0;
+    if (gameParameters.s[0].y < 0) gameParameters.s[0].y = GameParameters::M - 1;
+
+    for (int i = 1; i < gameParameters.num; i++) {
+        if(gameParameters.s[0].x == gameParameters.s[i].x && gameParameters.s[0].y == gameParameters.s[i].y) {
+            isGameOver = true;
+        }
+    }
+}

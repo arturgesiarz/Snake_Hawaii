@@ -3,62 +3,47 @@
 #include "../include/GameParameters.h"
 #include "../include/Screen.h"
 #include <ctime>
+#include <array>
 
 using namespace sf;
 
-void Tick (bool& isGameOver, Sound& eatEffectSound, GameParameters& gameParameters) {
-    for (int i = gameParameters.num; i > 0; --i) {
-        gameParameters.s[i].x = gameParameters.s[i - 1].x;
-        gameParameters.s[i].y = gameParameters.s[i - 1].y;
-    }
-
-    switch (gameParameters.direction) {
-        case 0:
-            gameParameters.s[0].y += 1;
-            break;
-        case 1:
-            gameParameters.s[0].x -= 1;
-            break;
-        case 2:
-            gameParameters.s[0].x += 1;
-            break;
-        case 3:
-            gameParameters.s[0].y -= 1;
-            break;
-        default:
-            break;
-    }
-
-    if ((gameParameters.s[0].x == gameParameters.f.x) && (gameParameters.s[0].y == gameParameters.f.y)) {
-        eatEffectSound.play();
-        gameParameters.num++;
-        gameParameters.f.x = rand() % GameParameters::N;
-        gameParameters.f.y = rand() % GameParameters::M;
-    }
-
-    if (gameParameters.s[0].x >= GameParameters::N) gameParameters.s[0].x = 0;
-    if (gameParameters.s[0].x < 0) gameParameters.s[0].x = GameParameters::N - 1;
-    if (gameParameters.s[0].y >= GameParameters::M) gameParameters.s[0].y = 0;
-    if (gameParameters.s[0].y < 0) gameParameters.s[0].y = GameParameters::M - 1;
-
-    for (int i = 1; i < gameParameters.num; i++) {
-        if(gameParameters.s[0].x == gameParameters.s[i].x && gameParameters.s[0].y == gameParameters.s[i].y) {
-            isGameOver = true;
-        }
-    }
-}
-
-int main() {
-    srand(time(0));
+int start() {
 
     bool isGameOver = false;
     bool startGame = false;
 
     GameParameters gameParameters;
+    gameParameters.f.x = 10;
+    gameParameters.f.y = 10;
 
+    // game window
     RenderWindow window(VideoMode(GameParameters::W + 200, GameParameters::H + 200), "Snake Game!", Style::Close);
     window.setVisible(false);
 
+    // font loading
+    sf::Font font;
+    if (!font.loadFromFile("resources/arial.ttf")) {
+        return -1;
+    }
+
+    sf::Text text;
+    text.setFont(font);
+    text.setCharacterSize(24);
+    text.setFillColor(sf::Color::Black);
+    text.setStyle(sf::Text::Bold);
+
+    // texture
+    std::array<sf::Texture, 3> textures;
+    textures[0].loadFromFile("resources/white.png");
+    textures[1].loadFromFile("resources/red.png");
+    textures[2].loadFromFile("resources/green.png");
+
+    std::array<sf::Sprite, 3> sprites;
+    for (int i = 0; i < 3; ++i) {
+        sprites[i].setTexture(textures[i]);
+    }
+
+    // soundtrack
     SoundBuffer gameOverSoundBuffer;
     SoundBuffer eatEffectBuffer;
 
@@ -72,36 +57,17 @@ int main() {
     Sound gameOverSound(gameOverSoundBuffer);
     Sound eatEffectSound(eatEffectBuffer);
 
-    Texture t1, t2, t3;
-    t1.loadFromFile(R"(resources\white.png)");
-    t2.loadFromFile(R"(resources\red.png)");
-    t3.loadFromFile(R"(resources\green.png)");
 
-    Sprite sprite1(t1);
-    Sprite sprite2(t2);
-    Sprite sprite3(t3);
-
+    // clock setting
+    srand(time(0));
     Clock clock;
     float timer = 0, delay = 0.1;
 
-    gameParameters.f.x = 10;
-    gameParameters.f.y = 10;
-
+    // welcome screen
     Screen::welcomeScreen(window,startGame);
 
-    sf::Font font;
-    if (!font.loadFromFile("resources/arial.ttf")) {
-        return -1;
-    }
 
-    sf::Text text;
-    text.setFont(font);
-    text.setCharacterSize(24);
-    text.setFillColor(sf::Color::Black);
-    text.setStyle(sf::Text::Bold);
-
-
-
+    // the game render
     while (window.isOpen() && startGame) {
         float time = clock.getElapsedTime().asSeconds();
         clock.restart();
@@ -115,9 +81,10 @@ int main() {
             }
         }
 
+        // move
         if (timer > delay) {
             timer = 0;
-            Tick(isGameOver, eatEffectSound, gameParameters);
+            Screen::move(isGameOver, eatEffectSound, gameParameters);
         }
 
         int dir = gameParameters.direction;
@@ -139,8 +106,6 @@ int main() {
 
         window.clear();
 
-        // draw
-
         sf::Texture mainTexture;
         mainTexture.loadFromFile(R"(resources/main.jpg)");
 
@@ -151,20 +116,20 @@ int main() {
 
         for (int i = 0; i < GameParameters::N; i++) {
             for (int j = 0; j < GameParameters::M; j++) {
-                sprite1.setPosition(i * GameParameters::SIZE + 100, j * GameParameters::SIZE + 100);
-                window.draw(sprite1);
+                sprites[0].setPosition(i * GameParameters::SIZE + 100, j * GameParameters::SIZE + 100);
+                window.draw(sprites[0]);
             }
         }
         for (int i = 0; i < gameParameters.num; i++) {
-            sprite2.setPosition(gameParameters.s[i].x * GameParameters::SIZE + 100,
+            sprites[1].setPosition(gameParameters.s[i].x * GameParameters::SIZE + 100,
                                 gameParameters.s[i].y * GameParameters::SIZE + 100);
-            window.draw(sprite2);
+            window.draw(sprites[1]);
         }
 
-        sprite3.setPosition(gameParameters.f.x * GameParameters::SIZE + 100,
+        sprites[2].setPosition(gameParameters.f.x * GameParameters::SIZE + 100,
                             gameParameters.f.y * GameParameters::SIZE + 100);
 
-        window.draw(sprite3);
+        window.draw(sprites[2]);
 
         std::string scoreString = std::to_string(gameParameters.num - 4);
 
@@ -185,6 +150,5 @@ int main() {
             gameOverSound.stop();
         }
     }
-
-
+    return 0;
 }
